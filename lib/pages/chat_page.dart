@@ -72,18 +72,19 @@ class _ChatPageState extends State<ChatPage> {
      _messages.insert(0, m);
      _typingUsers.add(_gptchatUser);
    });
-   List<Messages> _messagesHistory = _messages.reversed.map((m) {
-    if (m.user == _currentUser) {
-      return Messages(role: Role.user, content: m.text);
-    } else{
-      return Messages(role: Role.assistant, content: m.text);
-    }
-   }).toList();
-   final request = ChatCompleteText(
-    model: GptTurbo0301ChatModel(),
-     messages: _messagesHistory,
-     maxToken: 200,
-     );
+  List<Map<String, dynamic>> messagesHistory =
+        _messages.reversed.toList().map((m) {
+      if (m.user == '_user') {
+        return Messages(role: Role.user, content: m.text).toJson();
+      } else {
+        return Messages(role: Role.assistant, content: m.text).toJson();
+      }
+    }).toList();
+    final request = ChatCompleteText(
+      messages: messagesHistory,
+      maxToken: 200,
+      model: GptTurbo0301ChatModel(),
+    );
      final response =await _OpenAI.onChatCompletion(request: request);
      for (var element in response!.choices) {
       if (element.message !=null) {
